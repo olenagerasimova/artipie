@@ -13,5 +13,6 @@ jobs:
       - name: Start python example and proof it works
         run: |
           cd examples/pypi
+          chmod +x ./run.sh
           sed -i 's+artipie/artipie:latest+artipie+' run.sh
           ./run.sh
