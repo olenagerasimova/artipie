@@ -25,7 +25,6 @@ package com.artipie.api;
 
 import com.amihaiemil.eoyaml.Yaml;
 import com.amihaiemil.eoyaml.YamlMapping;
-import com.artipie.asto.ext.ContentAs;
 import io.reactivex.Single;
 import io.reactivex.functions.Function;
 import java.nio.ByteBuffer;

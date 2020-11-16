@@ -23,9 +23,8 @@
  */
 package com.artipie.metrics;
 
-import com.artipie.asto.Concatenation;
+import com.artipie.api.ContentAs;
 import com.artipie.asto.Key;
-import com.artipie.asto.Remaining;
 import com.artipie.asto.Storage;
 import com.artipie.asto.rx.RxStorageWrapper;
 import com.artipie.http.Response;
@@ -35,7 +34,6 @@ import com.artipie.http.rs.common.RsJson;
 import hu.akarnokd.rxjava2.interop.SingleInterop;
 import io.reactivex.Observable;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -68,10 +66,7 @@ public final class MetricSlice implements Slice {
             rxsto.list(Key.ROOT)
                 .flatMapObservable(Observable::fromIterable)
                 .flatMapSingle(
-                    key -> rxsto.value(key).flatMap(bytes -> new Concatenation(bytes).single())
-                        .map(Remaining::new).map(Remaining::bytes)
-                        .map(bytes -> new String(bytes, StandardCharsets.US_ASCII))
-                        .map(Long::parseLong)
+                    key -> rxsto.value(key).to(ContentAs.LONG)
                         .map(
                             val -> Json.createObjectBuilder()
                                 .add("key", key.string())

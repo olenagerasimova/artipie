@@ -23,30 +23,56 @@
  */
 package com.artipie.api;
 
+import com.artipie.asto.Concatenation;
+import com.artipie.asto.Remaining;
 import io.reactivex.Single;
 import io.reactivex.functions.Function;
-import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
+import java.nio.charset.StandardCharsets;
 import org.reactivestreams.Publisher;
 
 /**
- * Rx publisher transformer to json.
- * @since 0.12.2
+ * Rx publisher transformer to single.
+ * @param <T> Single type
+ * @since 0.8
  */
-public final class ContentAsJson
-    implements Function<Single<? extends Publisher<ByteBuffer>>, Single<? extends JsonObject>> {
+public final class ContentAs<T>
+    implements Function<Single<? extends Publisher<ByteBuffer>>, Single<? extends T>> {
+
+    /**
+     * Content as string.
+     */
+    public static final ContentAs<String> STRING = new ContentAs<>(
+        bytes -> new String(bytes, StandardCharsets.UTF_8)
+    );
+
+    /**
+     * Content as {@code long} number.
+     */
+    public static final ContentAs<Long> LONG = new ContentAs<>(
+        bytes -> Long.valueOf(new String(bytes, StandardCharsets.US_ASCII))
+    );
+
+    /**
+     * Transform function.
+     */
+    private final Function<byte[], T> transform;
+
+    /**
+     * Ctor.
+     * @param transform Transform function
+     */
+    public ContentAs(final Function<byte[], T> transform) {
+        this.transform = transform;
+    }
 
     @Override
-    public Single<? extends JsonObject> apply(final Single<? extends Publisher<ByteBuffer>> pub) {
-        return new ContentAs<>(
-            bytes -> {
-                try (JsonReader reader = Json.createReader(new ByteArrayInputStream(bytes))) {
-                    return reader.readObject();
-                }
-            }
-        ).apply(pub);
+    public Single<? extends T> apply(
+        final Single<? extends Publisher<ByteBuffer>> content
+    ) {
+        return content.flatMap(pub -> new Concatenation(pub).single())
+            .map(Remaining::new)
+            .map(Remaining::bytes)
+            .map(this.transform);
     }
 }
