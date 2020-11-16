@@ -71,6 +71,7 @@ public final class MetricSlice implements Slice {
                     key -> rxsto.value(key).flatMap(bytes -> new Concatenation(bytes).single())
                         .map(Remaining::new).map(Remaining::bytes)
                         .map(bytes -> new String(bytes, StandardCharsets.US_ASCII))
+                        .map(Long::parseLong)
                         .map(
                             val -> Json.createObjectBuilder()
                                 .add("key", key.string())
