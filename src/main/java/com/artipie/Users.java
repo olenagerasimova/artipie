@@ -28,7 +28,7 @@ import com.amihaiemil.eoyaml.YamlMapping;
 import com.amihaiemil.eoyaml.YamlMappingBuilder;
 import com.amihaiemil.eoyaml.YamlNode;
 import com.amihaiemil.eoyaml.YamlSequenceBuilder;
-import com.artipie.api.ContentAsYaml;
+import com.artipie.api.ContentAs;
 import com.artipie.asto.Content;
 import com.artipie.asto.Key;
 import com.artipie.asto.Storage;
@@ -215,7 +215,8 @@ public interface Users {
         public CompletionStage<YamlMapping> yaml() {
             return new RxStorageWrapper(this.storage)
                 .value(this.key)
-                .to(new ContentAsYaml())
+                .to(ContentAs.STRING)
+                .map(Yaml::createYamlInput)
                 .to(SingleInterop.get())
                 .thenApply(yaml -> (YamlMapping) yaml);
         }
