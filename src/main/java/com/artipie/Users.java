@@ -24,6 +24,7 @@
 package com.artipie;
 
 import com.amihaiemil.eoyaml.Yaml;
+import com.amihaiemil.eoyaml.YamlInput;
 import com.amihaiemil.eoyaml.YamlMapping;
 import com.amihaiemil.eoyaml.YamlMappingBuilder;
 import com.amihaiemil.eoyaml.YamlNode;
@@ -217,8 +218,8 @@ public interface Users {
                 .value(this.key)
                 .to(ContentAs.STRING)
                 .map(Yaml::createYamlInput)
-                .to(SingleInterop.get())
-                .thenApply(yaml -> (YamlMapping) yaml);
+                .map(YamlInput::readYamlMapping)
+                .to(SingleInterop.get());
         }
 
         /**
