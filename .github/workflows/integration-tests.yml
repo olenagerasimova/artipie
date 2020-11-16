@@ -1,12 +1,7 @@
 ---
 name: Integation tests
-"on":
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+"on": push
+
 jobs:
   maven-it:
     runs-on: ${{ matrix.os }}
