@@ -10,7 +10,7 @@ sleep 5
 # Add Artipie to Debian repository sources by modifying sources.list file
 touch sources.list
 echo "deb [trusted=yes] http://localhost:8080/my-debian my-debian main" >> sources.list
-mv sources.list /etc/apt
+sudo mv sources.list /etc/apt
 
 # Post a package.
 curl -i  -X PUT  --data-binary "@aglfn_1.7-3_amd64.deb" http://localhost:8080/my-debian/main/aglfn_1.7-3_amd64.deb
