@@ -1,7 +1,5 @@
 name: "Proof::debian"
-on:
-  push:
-    branches: all
+on: push
 
 jobs:
   proof:
